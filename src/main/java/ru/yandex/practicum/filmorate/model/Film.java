@@ -1,16 +1,17 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.controller.FilmController;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
-@lombok.Data
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Film {
+    @PositiveOrZero(message = "id can not be negative")
     private int id;
     @NotBlank
     private String name;
@@ -19,14 +20,7 @@ public class Film {
     @NotNull
     private LocalDate releaseDate;
     @Digits(integer = 2_147_483_647, fraction = 0) @Positive
-    @NotNull
+    @PositiveOrZero(message = "duration can not be negative")
     private long duration;
 
-    public Film(String name, String description, LocalDate releaseDate, long duration) {
-        this.id = new FilmController().getIdGeneration();
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-    }
 }
