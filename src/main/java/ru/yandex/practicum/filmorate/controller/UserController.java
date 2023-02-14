@@ -26,12 +26,18 @@ public class UserController {
     }
 
     @PostMapping
-    public User create(@RequestBody @Valid User user) {
+    public User create(@RequestBody @Valid User user) throws ValidationException {
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());
+
+        if (users.get(user.getId())!= null){
+            users.put(user.getEmail(), user);
+            log.debug("Пользователь: {} добавлен.", user);
+        } else {
+
         }
-        users.put(user.getEmail(), user);
-        log.debug("Пользователь: {} добавлен.", user);
+        }
+
         return user;
     }
 

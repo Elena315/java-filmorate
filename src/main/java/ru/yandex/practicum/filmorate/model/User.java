@@ -12,7 +12,7 @@ public class User {
     @NotBlank @Pattern(regexp = "\\S*")
     private String login;
     private String name;
-    @NotNull @Email
+    @NotNull @NotBlank @Email
     private String email;
     @NotNull @PastOrPresent
     private LocalDate birthday;
