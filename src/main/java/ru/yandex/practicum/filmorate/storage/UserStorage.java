@@ -15,7 +15,7 @@ import java.util.Map;
 @ToString
 public class UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
-    private static int id;
+    private static int id = 0;
 
     public int generateId() {
         return ++id;

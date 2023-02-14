@@ -11,6 +11,7 @@ import java.util.Map;
 @Component
 @Slf4j
 @AllArgsConstructor
+public
 class UserService {
     private final UserStorage userStorage;
 
