@@ -44,6 +44,9 @@ public class UserService {
     }
 
     private void validate(final User user) {
+        if (user.getId() == 0) {
+            user.setId(++increment);
+        }
         if(user.getName() == null) {
             user.setName(user.getLogin());
             log.info("UserService: Поле name не задано. Установлено значение {} из поля login", user.getLogin());
@@ -55,9 +58,6 @@ public class UserService {
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         if (!violations.isEmpty()) {
             throw new ValidationException("Ошибка валидации Пользователя");
-        }
-        if (user.getId() == 0) {
-            user.setId(++increment);
         }
     }
 }
