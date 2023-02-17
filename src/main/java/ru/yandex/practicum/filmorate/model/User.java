@@ -7,14 +7,19 @@ import java.time.LocalDate;
 
 @Data
 public class User {
-    @PositiveOrZero(message = "id can not be negative")
+
     private int id;
-    @NotBlank @Pattern(regexp = "\\S*")
+
+    @NotBlank(message = "Логин не может быть пустым.")
+    @Pattern(regexp = "\\S*", message = "Логин не может содержать пробелы.")
     private String login;
     private String name;
-    @NotNull @NotBlank @Email
+
+    @NotBlank(message = "email не может быть пустым.")
+    @Email (message = "Введенное значение не является адресом электронной почты.")
     private String email;
-    @NotNull @PastOrPresent
+
+    @PastOrPresent (message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
 
 }

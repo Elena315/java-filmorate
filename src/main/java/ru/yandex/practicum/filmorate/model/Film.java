@@ -1,26 +1,27 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Film {
-    @PositiveOrZero(message = "id can not be negative")
+
     private int id;
-    @NotBlank
+
+    @NotBlank(message = "Имя должно содержать буквенные символы.")
     private String name;
-    @Size(max = 200)
+
+    @Length(min = 1, max = 200, message = "Описание фильма не должно превышать 200 символов.")
     private String description;
+
     @NotNull
+    @PastOrPresent(message = "Дата релиза не может быть в будущем. ")
     private LocalDate releaseDate;
-    @Digits(integer = 2_147_483_647, fraction = 0) @Positive
-    @PositiveOrZero(message = "duration can not be negative")
+
+    @Min(value = 0, message = "Продолжительность фильма не может быть отрицательной.")
     private long duration;
 
 }

@@ -14,6 +14,7 @@ import java.util.Map;
 @EqualsAndHashCode
 @ToString
 public class UserStorage {
+
     private final Map<Integer, User> users = new HashMap<>();
     private static int id = 0;
 
