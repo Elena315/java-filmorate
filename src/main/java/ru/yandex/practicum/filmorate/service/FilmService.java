@@ -32,7 +32,6 @@ public class FilmService {
 
     public Film createFilm(Film film) {
         validate(film);
-        validateReleaseDate(film, "добавлен");
         return filmStorage.create(film);
     }
 
@@ -49,6 +48,7 @@ public class FilmService {
         log.debug("{} фильм: {}", text, film.getName());
     }
     private void validate(Film film) {
+        validateReleaseDate(film, "добавлен");
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         if (!violations.isEmpty()) {
             throw new ValidationException("Ошибка валидации Фильма");
