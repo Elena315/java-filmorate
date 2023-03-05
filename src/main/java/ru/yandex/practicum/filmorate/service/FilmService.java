@@ -32,6 +32,9 @@ public class FilmService {
     }
 
     public Film createFilm(Film film) {
+        if (film.getName().isBlank() || film.getName()==null) {
+            throw new ValidationException("Название фильма не может быть пустым");
+        }
         validateReleaseDate(film, "Добавлен");
         return filmStorage.create(film);
     }

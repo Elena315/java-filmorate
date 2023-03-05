@@ -5,7 +5,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -25,10 +26,9 @@ class UserServiceTest {
         User user = new User();
         user.setName("Correct Name");
         user.setLogin("Correctlogin");
-        user.setEmail("Correct.email@mail.ru");
-        user.setBirthday( LocalDate.of(2002, 1, 1));
+        user.setEmail("correct.email@mail.ru");
+        user.setBirthday(LocalDate.now().plusYears(-33));
         User addedUser = service.createUser(user);
-
         assertNotEquals(0, addedUser.getId());
         assertTrue(service.getAllUsers().contains(addedUser));
     }
@@ -36,12 +36,11 @@ class UserServiceTest {
     @Test
     void shouldSetUserNameWhenEmptyUserName() {
         User user = new User();
-        user.setName("");
+        user.setName(" ");
         user.setLogin("Correctlogin");
-        user.setEmail("Correct.email@mail.ru");
-        user.setBirthday( LocalDate.of(2002, 1, 1));
+        user.setEmail("correct.email@mail.ru");
+        user.setBirthday(LocalDate.now().plusYears(-33));
         User addedUser = service.createUser(user);
-
         assertNotEquals(0, addedUser.getId());
         assertEquals(addedUser.getLogin(), addedUser.getName());
         assertTrue(service.getAllUsers().contains(addedUser));
@@ -50,34 +49,48 @@ class UserServiceTest {
     @Test
     void shouldThrowExceptionWhenFailedUserLogin() {
         User user = new User();
-        user.setLogin(" ");
-
+        user.setName("Correct Name");
+        user.setLogin("Correct login");
+        user.setEmail("correct.email@mail.ru");
+        user.setBirthday(LocalDate.now().plusYears(-33));
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createUser(user));
-        assertEquals("Ошибка валидации Пользователя", ex.getMessage());
+        assertEquals("Ошибка валидации Пользователя: " +
+                "Логин не может содержать пробелы.", ex.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenFailedUserEmail() {
         User user = new User();
-        user.setEmail(" ");
+        user.setName("Correct Name");
+        user.setLogin("Correctlogin");
+        user.setEmail("notCorrect email");
+        user.setBirthday(LocalDate.now().plusYears(-33));
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createUser(user));
-        assertEquals("Ошибка валидации Пользователя", ex.getMessage());
+        assertEquals("Ошибка валидации Пользователя: " +
+                "Введенное значение не является адресом электронной почты.", ex.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenFailedUserBirthDate() {
         User user = new User();
-        user.setBirthday(LocalDate.now().plusYears(-33));
+        user.setName("Correct Name");
+        user.setLogin("Correctlogin");
+        user.setEmail("correct.email@mail.ru");
+        user.setBirthday(LocalDate.now().plusYears(33));
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createUser(user));
-        assertEquals("Ошибка валидации Пользователя", ex.getMessage());
+        assertEquals("Дата рождения пользователя не может быть в будущем", ex.getMessage());
     }
 
     @Test
     void shouldThrowExceptionWhenUpdateFailedUserId() {
         User user = new User();
         user.setId(99);
+        user.setName("Correct Name");
+        user.setLogin("correctlogin");
+        user.setEmail("correct.email@mail.ru");
+        user.setBirthday(LocalDate.now().plusYears(-33));
 
-        ValidationException ex = assertThrows(ValidationException.class, () -> service.updateUser(user));
-        assertEquals("Ошибка валидации Пользователя", ex.getMessage());
+        UserNotFoundException ex = assertThrows(UserNotFoundException.class, () -> service.updateUser(user));
+        assertEquals("Пользователя с id=99 нет в базе", ex.getMessage());
     }
 }

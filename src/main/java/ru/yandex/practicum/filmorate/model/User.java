@@ -1,19 +1,24 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.Data;
-
+import javax.validation.Valid;
 import javax.validation.constraints.*;
+
+import lombok.Data;
+import ru.yandex.practicum.filmorate.annotations.CorrectLogin;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Valid
 public class User {
 
     private int id;
 
     @NotBlank(message = "Логин не может быть пустым.")
     @Pattern(regexp = "\\S*", message = "Логин не может содержать пробелы.")
+    @CorrectLogin
     private String login;
     private String name;
 

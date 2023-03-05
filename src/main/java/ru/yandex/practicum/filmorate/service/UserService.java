@@ -3,12 +3,11 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.CustomValidationException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.HashSet;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,7 +16,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class UserService {
+
     private final UserStorage userStorage;
+
 
     /**
      * Получение всех пользователей
@@ -37,6 +38,10 @@ public class UserService {
      * Создание нового пользователя
      */
     public User createUser(User user) {
+        if (user.getBirthday().isAfter(LocalDate.now())){
+            log.debug("Ошибка валидации");
+            throw new ValidationException("Дата рождения пользователя не может быть в будущем");
+        }
         setUserNameByLogin(user, "Добавлен");
         return userStorage.create(user);
     }
@@ -95,4 +100,5 @@ public class UserService {
         }
         log.debug("{} пользователь: {}, email: {}", text, user.getName(), user.getEmail());
     }
+
 }

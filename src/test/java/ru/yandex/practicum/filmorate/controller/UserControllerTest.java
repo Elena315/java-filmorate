@@ -5,11 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.time.LocalDate;
 
@@ -17,29 +18,31 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-@SpringBootTest
+@WebMvcTest(value = UserController.class)
 @AutoConfigureMockMvc
-class FilmControllerTest {
+class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private FilmController filmController;
+    private UserController userController;
+
+    @MockBean
+    private UserService service;
 
     @Test
-    void shouldReturn200whenPostCorrectFilmData() throws Exception {
-        Film film = new Film();
-        film.setName("Correct Name");
-        film.setDescription("Correct description");
-        film.setReleaseDate(LocalDate.of(1995,5,26));
-        film.setDuration(100L);
-        Mockito.when(filmController.createFilm(Mockito.any())).thenReturn(film);
-        mockMvc.perform(post("/films")
-                        .content(objectMapper.writeValueAsString(film))
+    void shouldReturn200whenPostCorrectUserData() throws Exception {
+        User user = new User();
+        user.setName("Correct Name");
+        user.setLogin("Correctlogin");
+        user.setEmail("correct.email@mail.ru");
+        user.setBirthday(LocalDate.now().plusYears(-33));
+        Mockito.when(userController.createUser(Mockito.any())).thenReturn(user);
+        mockMvc.perform(post("/users")
+                        .content(objectMapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(film)));
+                .andExpect(content().json(objectMapper.writeValueAsString(user)));
     }
 }

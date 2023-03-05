@@ -2,8 +2,10 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import ru.yandex.practicum.filmorate.annotations.CorrectReleaseDay;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
@@ -20,8 +22,7 @@ public class Film {
     @Length(min = 1, max = 200, message = "Описание фильма не должно превышать 200 символов.")
     private String description;
 
-    @NotNull
-    @PastOrPresent(message = "Дата релиза не может быть в будущем. ")
+    @CorrectReleaseDay(message = "Дата релиза не может быть в будущем.")
     private LocalDate releaseDate;
 
     @Min(value = 0, message = "Продолжительность фильма не может быть отрицательной.")
