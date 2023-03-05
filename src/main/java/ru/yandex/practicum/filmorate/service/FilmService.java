@@ -34,6 +34,10 @@ public class FilmService {
     public Film createFilm(Film film) {
         if (film.getName().isBlank() || film.getName()==null) {
             throw new ValidationException("Название фильма не может быть пустым");
+        } else if (film.getDuration() < 0){
+            throw new ValidationException("Продолжительность фильма не может быть отрицательной.");
+        } else if(film.getDescription().length() > 200){
+            throw new ValidationException("Описание фильма не должно превышать 200 символов.");
         }
         validateReleaseDate(film, "Добавлен");
         return filmStorage.create(film);

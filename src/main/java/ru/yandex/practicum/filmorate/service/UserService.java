@@ -41,7 +41,14 @@ public class UserService {
         if (user.getBirthday().isAfter(LocalDate.now())){
             log.debug("Ошибка валидации");
             throw new ValidationException("Дата рождения пользователя не может быть в будущем");
+        } else if  (user.getEmail().contains(" ")){
+            log.debug("Ошибка валидации");
+            throw new ValidationException("Почта не может содержать пробел");
+        } else if  (user.getLogin().contains(" ")){
+            log.debug("Ошибка валидации");
+            throw new ValidationException("Логин не может содержать пробел");
         }
+
         setUserNameByLogin(user, "Добавлен");
         return userStorage.create(user);
     }

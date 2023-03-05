@@ -54,8 +54,7 @@ class UserServiceTest {
         user.setEmail("correct.email@mail.ru");
         user.setBirthday(LocalDate.now().plusYears(-33));
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createUser(user));
-        assertEquals("Ошибка валидации Пользователя: " +
-                "Логин не может содержать пробелы.", ex.getMessage());
+        assertEquals("Логин не может содержать пробел", ex.getMessage());
     }
 
     @Test
@@ -66,8 +65,7 @@ class UserServiceTest {
         user.setEmail("notCorrect email");
         user.setBirthday(LocalDate.now().plusYears(-33));
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createUser(user));
-        assertEquals("Ошибка валидации Пользователя: " +
-                "Введенное значение не является адресом электронной почты.", ex.getMessage());
+        assertEquals("Почта не может содержать пробел", ex.getMessage());
     }
 
     @Test

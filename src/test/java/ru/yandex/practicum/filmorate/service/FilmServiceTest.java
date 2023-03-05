@@ -42,8 +42,7 @@ class FilmServiceTest {
         film.setDuration(100L);
 
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createFilm(film));
-        assertEquals("Ошибка валидации Фильма: " +
-                "Имя должно содержать буквенные символы. ", ex.getMessage());
+        assertEquals("Название фильма не может быть пустым", ex.getMessage());
     }
 
     @Test
@@ -54,8 +53,7 @@ class FilmServiceTest {
         film.setReleaseDate(LocalDate.of(1895,12,28));
         film.setDuration(100L);
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createFilm(film));
-        assertEquals("Ошибка валидации Фильма: " +
-                "Имя должно содержать буквенные символы. ", ex.getMessage());
+        assertEquals("Название фильма не может быть пустым", ex.getMessage());
     }
 
     @Test
@@ -66,8 +64,7 @@ class FilmServiceTest {
         film.setReleaseDate(LocalDate.of(1995,5,26));
         film.setDuration(-100L);
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createFilm(film));
-        assertEquals("Ошибка валидации Фильма: " +
-                "Продолжительность фильма не может быть отрицательной. ", ex.getMessage());
+        assertEquals("Продолжительность фильма не может быть отрицательной.", ex.getMessage());
     }
 
     @Test
@@ -103,8 +100,7 @@ class FilmServiceTest {
         film.setReleaseDate(LocalDate.of(1995,5,26));
         film.setDuration(100L);
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createFilm(film));
-        assertEquals("Ошибка валидации Фильма: " +
-                "Описание фильма не должно превышать 200 символов. ", ex.getMessage());
+        assertEquals("Описание фильма не должно превышать 200 символов.", ex.getMessage());
     }
 
     @Test
