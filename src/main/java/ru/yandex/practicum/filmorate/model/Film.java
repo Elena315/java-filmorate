@@ -5,6 +5,9 @@ import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Data
 public class Film {
@@ -23,5 +26,30 @@ public class Film {
 
     @Min(value = 0, message = "Продолжительность фильма не может быть отрицательной.")
     private long duration;
+
+    private Set<Integer> likes;
+
+    public Film(String name, String description, LocalDate releaseDate, Integer duration, Set<Integer> likes) {
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.likes = Objects.requireNonNullElseGet(likes, HashSet::new);
+    }
+
+    public Film() {
+
+    }
+
+    public void addLike(Integer id) {
+        if (likes == null) {
+            likes = new HashSet<>();
+        }
+        likes.add(id);
+    }
+
+    public void deleteLike(Integer id) {
+        likes.remove(id);
+    }
 
 }

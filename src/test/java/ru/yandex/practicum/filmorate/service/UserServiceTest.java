@@ -30,7 +30,7 @@ class UserServiceTest {
         User addedUser = service.createUser(user);
 
         assertNotEquals(0, addedUser.getId());
-        assertTrue(service.getAllUsers().values().contains(addedUser));
+        assertTrue(service.getAllUsers().contains(addedUser));
     }
 
     @Test
@@ -44,7 +44,7 @@ class UserServiceTest {
 
         assertNotEquals(0, addedUser.getId());
         assertEquals(addedUser.getLogin(), addedUser.getName());
-        assertTrue(service.getAllUsers().values().contains(addedUser));
+        assertTrue(service.getAllUsers().contains(addedUser));
     }
 
     @Test

@@ -2,63 +2,61 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
 import java.time.LocalDate;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
 
-@Component
+@Service
 @Slf4j
 @AllArgsConstructor
 public class FilmService {
-
-    private static int increment = 0;
-
-    private final Validator validator;
-
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
     private static final LocalDate START_DATA = LocalDate.of(1895, 12, 28);
 
-    private final FilmStorage filmStorage;
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
+    }
 
-    public Map<Integer, Film> getAllFilms() {
-        return filmStorage.getFilms();
+    public Film getFilmById(Integer id) {
+        return filmStorage.getFilmById(id);
+    }
+
+    public List<Film> getFilmsPopular(Integer count) {
+        return filmStorage.getFilmsPopular(count);
     }
 
     public Film createFilm(Film film) {
-        validate(film);
+        validateReleaseDate(film, "Добавлен");
         return filmStorage.create(film);
     }
 
     public Film updateFilm(Film film) {
-        validate(film);
+        validateReleaseDate(film, "Обновлен");
         return filmStorage.update(film);
+    }
+
+    public void addLike(Integer filmId, Integer userId) {
+        userStorage.getUserById(userId);
+        filmStorage.addLike(filmId, userId);
+        log.info("like for film with id={} added", filmId);
+    }
+
+    public void deleteLike(Integer filmId, Integer userId) {
+        userStorage.getUserById(userId);
+        filmStorage.deleteLike(filmId, userId);
+        log.info("like for film with id={} deleted", filmId);
     }
 
     public void validateReleaseDate(Film film, String text) {
         if (film.getReleaseDate().isBefore(START_DATA)) {
-            log.debug("Не {} фильм: {}", text, film.getName());
             throw new ValidationException("Дата релиза не может быть раньше " + START_DATA);
         }
         log.debug("{} фильм: {}", text, film.getName());
-    }
-    private void validate(Film film) {
-        validateReleaseDate(film, "добавлен");
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        if (!violations.isEmpty()) {
-            throw new ValidationException("Ошибка валидации Фильма");
-        }
-        if (film.getId() == 0) {
-            film.setId(getNextId());
-        }
-    }
-
-    private static int getNextId() {
-        return ++increment;
     }
 }

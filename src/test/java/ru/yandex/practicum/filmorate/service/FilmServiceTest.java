@@ -40,8 +40,11 @@ class FilmServiceTest {
         film.setReleaseDate(LocalDate.of(1895,12,29));
         film.setDuration(100L);
 
+      /*  ValidationException ex = assertThrows(ValidationException.class, () -> service.createFilm(film));
+        assertEquals("Ошибка валидации Фильма", ex.getMessage());*/
         ValidationException ex = assertThrows(ValidationException.class, () -> service.createFilm(film));
-        assertEquals("Ошибка валидации Фильма", ex.getMessage());
+        assertEquals("Ошибка валидации Фильма: " +
+                "Имя должно содержать буквенные символы. ", ex.getMessage());
     }
 
 

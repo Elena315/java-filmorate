@@ -14,7 +14,7 @@
 	<artifactId>filmorate</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>filmorate</name>
-	<description>Cервис, который работает с фильмами и оценками пользователей</description>
+	<description> Приложение конопоиск </description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
