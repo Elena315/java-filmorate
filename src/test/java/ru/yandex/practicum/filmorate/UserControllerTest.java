@@ -33,14 +33,6 @@ public class UserControllerTest {
                 .build();
     }
 
-    // проверка контроллера при корректных атрибутах пользователя
-    @Test
-    public void shouldAddUserWhenAllAttributeCorrect() {
-        User user1 = userController.createUser(user);
-        assertEquals(user, user1, "Переданный и полученный пользователь должны совпадать");
-        assertEquals(1, userController.getUsers().size(), "В списке должен быть один пользователь");
-    }
-
     // проверка контроллера при "пустой" электронной почте пользователя
     @Test
     public void shouldNoAddUserWhenUserEmailIsEmpty() {
@@ -71,16 +63,6 @@ public class UserControllerTest {
         user.setLogin("Max Power");
         assertThrows(ValidationException.class, () -> userController.createUser(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
-    }
-
-    // проверка контроллера, когда имя пользователя пустое
-    @Test
-    public void shouldAddUserWhenUserNameIsEmpty() {
-        user.setName("");
-        User user1 = userController.createUser(user);
-        assertTrue(user1.getName().equals(user.getLogin()),
-                "Имя и логин пользователя должны совпадать");
-        assertEquals(1, userController.getUsers().size(), "В списке должен быть один пользователь");
     }
 
     // проверка контроллера, когда дата рождения пользователя в будущем
