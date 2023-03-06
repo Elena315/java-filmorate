@@ -1,48 +1,26 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.FilmFoundException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
-    private final Map<Integer, Film> films = new HashMap<>();
+    private Long id;
 
-    private static int id;
+    private Map<Long, Film> films;
 
-    public int generateId() {
-        return ++id;
-    }
-
-    @Override
-    public Film create(Film film) {
-        if (films.containsKey(film.getId())) {
-            throw new FilmFoundException(String.format("Фильм с id=%d есть в базе", film.getId()));
-        }
-        int newTaskId = generateId();
-        film.setId(newTaskId);
-        films.put(newTaskId, film);
-        return film;
-    }
-
-    @Override
-    public Film update(Film film) {
-        if (!films.containsKey(film.getId())) {
-            throw new FilmNotFoundException(String.format("Фильма с id=%d нет в базе", film.getId()));
-        }
-        films.put(film.getId(), film);
-        return film;
-    }
-
-    @Override
-    public Film delete(Film film) {
-        return null;
+    public InMemoryFilmStorage() {
+        this.id = 0L;
+        this.films = new HashMap<>();
     }
 
     @Override
@@ -51,34 +29,61 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(Integer id) {
-        if (!films.containsKey(id)) {
-            throw new FilmNotFoundException(String.format("Фильм с id=%d не найден", id));
+    public Film create(Film film) {
+        if (isValidFilm(film)) {
+            film.setId(++id);
+            films.put(film.getId(), film);
         }
-        return films.get(id);
+        return film;
     }
 
     @Override
-    public List<Film> getFilmsPopular(Integer count) {
-        return getAllFilms()
-                .stream()
-                .filter(film -> film.getLikes() != null)
-                .sorted((t1, t2) -> t2.getLikes().size() - t1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void addLike(Integer filmId, Integer userId) {
-        films.get(filmId).addLike(userId);
-    }
-
-    @Override
-    public void deleteLike(Integer filmId, Integer userId) {
-        Film film = films.get(filmId);
-        if (!film.getLikes().contains(userId)) {
-            throw new NotFoundException("id", String.format("user with id=%d not found", userId));
+    public Film update(Film film) {
+        if (film.getId() == null) {
+            throw new ValidationException("Передан пустой аргумент!");
         }
-        film.deleteLike(userId);
+        if (!films.containsKey(film.getId())) {
+            throw new FilmNotFoundException("Фильм с ID=" + film.getId() + " не найден!");
+        }
+        if (isValidFilm(film)) {
+            films.put(film.getId(), film);
+        }
+        return film;
+    }
+
+    @Override
+    public Film delete(Long filmId) {
+        if (filmId == null) {
+            throw new ValidationException("Передан пустой аргумент!");
+        }
+        if (!films.containsKey(filmId)) {
+            throw new FilmNotFoundException("Фильм с ID=" + filmId + " не найден!");
+        }
+        return films.remove(filmId);
+    }
+
+    @Override
+    public Film getFilmById(Long filmId) {
+        if (!films.containsKey(filmId)) {
+            throw new FilmNotFoundException("Фильм с ID=" + filmId + " не найден!");
+        }
+        return films.get(filmId);
+    }
+
+    private boolean isValidFilm(Film film) {
+        if (film.getName().isEmpty()) {
+            throw new ValidationException("Название фильма не должно быть пустым!");
+        }
+        if ((film.getDescription().length()) > 200 || (film.getDescription().isEmpty())) {
+            throw new ValidationException("Описание фильма больше 200 символов или пустое: " + film.getDescription().length());
+        }
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Некорректная дата релиза фильма: " + film.getReleaseDate());
+        }
+        if (film.getDuration() <= 0) {
+            throw new ValidationException("Продолжительность должна быть положительной: " + film.getDuration());
+        }
+        return true;
     }
 }
+

@@ -1,48 +1,52 @@
 package ru.yandex.practicum.filmorate.model;
 
-import javax.validation.Valid;
 import javax.validation.constraints.*;
 
+import lombok.Builder;
 import lombok.Data;
-import ru.yandex.practicum.filmorate.annotations.CorrectLogin;
 
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Valid
+@Builder
 public class User {
 
-    private int id;
+    private Long id;
 
     @NotBlank(message = "Логин не может быть пустым.")
     @Pattern(regexp = "\\S*", message = "Логин не может содержать пробелы.")
-    @CorrectLogin
     private String login;
     private String name;
 
-    @NotBlank(message = "email не может быть пустым.")
     @Email (message = "Введенное значение не является адресом электронной почты.")
     private String email;
 
     @PastOrPresent (message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
 
-    private Set<Integer> friends;
+    private Set<Long> friends;
 
-    public void addFriend(Integer id) {
-        if (friends == null) {
-            friends = new HashSet<>();
+    public User(Long id, String email, String login, String name, LocalDate birthday, Set<Long> friends) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
+            this.name = login;
         }
-        friends.add(id);
+        this.birthday = birthday;
+        this.friends = friends;
+        if (friends == null) {
+            this.friends = new HashSet<>();
+        }
     }
 
-    public Set<Integer> getFriendsId() {
-        if (friends == null) {
-            friends = new HashSet<>();
+    public void setName(String name) {
+        if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
+            this.name = login;
         }
-        return friends;
     }
 
 }

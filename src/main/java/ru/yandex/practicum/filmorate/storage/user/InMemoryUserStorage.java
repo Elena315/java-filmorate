@@ -1,68 +1,88 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.UserFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
-    private final Map<Integer, User> users = new HashMap<>();
-    private static int id;
 
-    public int generateId() {
-        return ++id;
+    private Long id;
+    private Map<Long, User> users;
+
+    public InMemoryUserStorage(){
+        id = 0L;
+        users = new HashMap<>();
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return new ArrayList<>(users.values());
     }
 
     @Override
     public User create(User user) {
-        if (users.containsKey(user.getId())) {
-            throw new UserFoundException(String.format("Пользователь с id=%d есть в базе", user.getId()));
+        if (isValidUser(user)) {
+            user.setId(++id);
+            users.put(user.getId(), user);
         }
-        int newTaskId = generateId();
-        user.setId(newTaskId);
-        users.put(newTaskId, user);
         return user;
     }
 
     @Override
     public User update(User user) {
-        if (!users.containsKey(user.getId())) {
-            throw new UserNotFoundException(String.format("Пользователя с id=%d нет в базе", user.getId()));
+        if (user.getId() == null) {
+            throw new ValidationException("Передан пустой аргумент!");
         }
-        users.put(user.getId(), user);
+        if (!users.containsKey(user.getId())) {
+            throw new UserNotFoundException("Пользователь с ID=" + user.getId() + " не найден!");
+        }
+        if (isValidUser(user)) {
+            users.put(user.getId(), user);
+        }
         return user;
     }
 
     @Override
-    public User delete(User user) {
-        return null;
-    }
-
-    @Override
-    public List<User> getAllUsers() {
-        return new ArrayList<>(users.values());
-    }
-
-    @Override
-    public User getUserById(Integer id) {
-        if (!users.containsKey(id)) {
-            throw new UserNotFoundException(String.format("Пользователь с id=%d не найден", id));
+    public User delete(Long userId) {
+        if (userId == null) {
+            throw new ValidationException("Передан пустой аргумент!");
         }
-        return users.get(id);
+        if (!users.containsKey(userId)) {
+            throw new UserNotFoundException("Пользователь с ID=" + userId + " не найден!");
+        }
+        // удаляем из списка друзей пользователя у других пользователей
+        for (User user : users.values()) {
+            user.getFriends().remove(userId);
+        }
+        return users.remove(userId);
     }
 
     @Override
-    public List<User> getUserFriends(Integer userId) {
-        return users.get(userId).getFriends()
-                .stream()
-                .map(users::get)
-                .collect(Collectors.toList());
+    public User getUserById(Long userId) {
+        if (!users.containsKey(userId)) {
+            throw new UserNotFoundException("Пользователь с ID=" + userId + " не найден!");
+        }
+        return users.get(userId);
+    }
+
+    private boolean isValidUser(User user) {
+        if (!user.getEmail().contains("@")) {
+            throw new ValidationException("Некорректный e-mail пользователя: " + user.getEmail());
+        }
+        if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
+            throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
+        }
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Некорректная дата рождения пользователя: " + user.getBirthday());
+        }
+        return true;
     }
 }

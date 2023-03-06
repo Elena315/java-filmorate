@@ -1,20 +1,19 @@
 package ru.yandex.practicum.filmorate.model;
 
+import lombok.Builder;
 import lombok.Data;
 import javax.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
-import ru.yandex.practicum.filmorate.annotations.CorrectReleaseDay;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@Valid
+@Builder
 public class Film {
 
-    private int id;
+    private Long id;
 
     @NotBlank(message = "Имя должно содержать буквенные символы.")
     private String name;
@@ -22,23 +21,22 @@ public class Film {
     @Length(min = 1, max = 200, message = "Описание фильма не должно превышать 200 символов.")
     private String description;
 
-    @CorrectReleaseDay(message = "Дата релиза не может быть в будущем.")
+    @NotNull
     private LocalDate releaseDate;
 
     @Min(value = 0, message = "Продолжительность фильма не может быть отрицательной.")
-    private long duration;
+    private Integer duration;
+    private Set<Long> likes;
 
-    private Set<Integer> likes;
-
-    public void addLike(Integer id) {
+    public Film(Long id, String name, String description, LocalDate releaseDate, Integer duration, Set<Long> likes) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.likes = likes;
         if (likes == null) {
-            likes = new HashSet<>();
+            this.likes = new HashSet<>();
         }
-        likes.add(id);
     }
-
-    public void deleteLike(Integer id) {
-        likes.remove(id);
-    }
-
 }
