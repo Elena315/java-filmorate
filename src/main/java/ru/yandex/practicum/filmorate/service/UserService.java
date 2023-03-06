@@ -19,7 +19,6 @@ public class UserService {
 
     private final UserStorage userStorage;
 
-
     /**
      * Получение всех пользователей
      */
@@ -37,7 +36,7 @@ public class UserService {
     /**
      * Создание нового пользователя
      */
-    public User createUser(User user) {
+    public User createUser(User user) throws ValidationException{
         if (user.getBirthday().isAfter(LocalDate.now())){
             log.debug("Ошибка валидации");
             throw new ValidationException("Дата рождения пользователя не может быть в будущем");

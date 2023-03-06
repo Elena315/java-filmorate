@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -34,13 +35,24 @@ public class UserController {
         return userService.getUserById(userId);
     }
 
+    @GetMapping("/{id}/friends")
+    public List<User> getFriendsSet(@PathVariable Integer id) {
+        return userService.getUserFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Set<User> getMutualFriends(@PathVariable("id") Integer id,
+                                      @PathVariable("otherId") Integer otherId) {
+        return userService.getMutualFriends(id, otherId);
+    }
+
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) throws ValidationException {
         return userService.createUser(user);
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
+    public User updateUser(@RequestBody User user) throws ValidationException {
         userService.setUserNameByLogin(user, "Обновлен");
         return userService.updateUser(user);
     }
@@ -55,14 +67,5 @@ public class UserController {
         userService.deleteFriend(id, friendId);
     }
 
-    @GetMapping("/{id}/friends")
-    public List<User> getFriendsSet(@PathVariable Integer id) {
-        return userService.getUserFriends(id);
-    }
 
-    @GetMapping("/{id}/friends/common/{otherId}")
-    public Set<User> getMutualFriends(@PathVariable("id") Integer id,
-                                      @PathVariable("otherId") Integer otherId) {
-        return userService.getMutualFriends(id, otherId);
-    }
 }

@@ -9,6 +9,8 @@ public interface UserStorage {
 
     User update(User user);
 
+    User delete(User user);
+
     List<User> getAllUsers();
 
     User getUserById(Integer id);

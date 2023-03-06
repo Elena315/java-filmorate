@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -13,11 +12,17 @@ import java.util.List;
 
 @Service
 @Slf4j
-@AllArgsConstructor
 public class FilmService {
+
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+
     private static final LocalDate START_DATA = LocalDate.of(1895, 12, 28);
+
+   public FilmService(FilmStorage filmStorage, UserStorage userStorage){
+       this.filmStorage = filmStorage;
+       this.userStorage = userStorage;
+   }
 
     public List<Film> getAllFilms() {
         return filmStorage.getAllFilms();
@@ -31,7 +36,7 @@ public class FilmService {
         return filmStorage.getFilmsPopular(count);
     }
 
-    public Film createFilm(Film film) {
+    public Film createFilm(Film film) throws ValidationException {
         if (film.getName().isBlank() || film.getName()==null) {
             throw new ValidationException("Название фильма не может быть пустым");
         } else if (film.getDuration() < 0){

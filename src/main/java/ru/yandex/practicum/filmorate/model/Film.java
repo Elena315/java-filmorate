@@ -1,17 +1,17 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
+import javax.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import ru.yandex.practicum.filmorate.annotations.CorrectReleaseDay;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Data
+@Valid
 public class Film {
 
     private int id;
@@ -29,18 +29,6 @@ public class Film {
     private long duration;
 
     private Set<Integer> likes;
-
-    public Film(String name, String description, LocalDate releaseDate, Integer duration, Set<Integer> likes) {
-        this.name = name;
-        this.description = description;
-        this.releaseDate = releaseDate;
-        this.duration = duration;
-        this.likes = Objects.requireNonNullElseGet(likes, HashSet::new);
-    }
-
-    public Film() {
-
-    }
 
     public void addLike(Integer id) {
         if (likes == null) {
