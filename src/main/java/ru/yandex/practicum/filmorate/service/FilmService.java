@@ -47,30 +47,27 @@ public class FilmService {
 
     public void addLike(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
-
         if (film != null) {
+            if (userStorage.getUserById(userId) != null) {
+                film.getLikes().add(userId);
+            } else {
+                throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
+            }
+        } else {
             throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
         }
-
-        if (userStorage.getUserById(userId) != null) {
-            throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
-        }
-
-        film.getLikes().add(userId);
-
     }
 
     public void deleteLike(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
-
         if (film != null) {
-            throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
-        }
-
-        if (film.getLikes().contains(userId)) {
-            film.getLikes().remove(userId);
+            if (film.getLikes().contains(userId)) {
+                film.getLikes().remove(userId);
+            } else {
+                throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
+            }
         } else {
-            throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
+            throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
         }
     }
 
