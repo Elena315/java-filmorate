@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -26,29 +25,52 @@ public class FilmService {
        this.userStorage = userStorage;
    }
 
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
+    }
+
+    public Film getFilmById(Long id) {
+        return filmStorage.getFilmById(id);
+    }
+
+    public Film create(Film film) {
+        return filmStorage.create(film);
+    }
+
+    public Film update(Film film) {
+        return filmStorage.update(film);
+    }
+
+    public Film delete(Long filmId){
+        return filmStorage.delete(filmId);
+    }
+
     public void addLike(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
+
         if (film != null) {
-            if (userStorage.getUserById(userId) != null) {
-                film.getLikes().add(userId);
-            } else {
-                throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
-            }
-        } else {
             throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
         }
+
+        if (userStorage.getUserById(userId) != null) {
+            throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
+        }
+
+        film.getLikes().add(userId);
+
     }
 
     public void deleteLike(Long filmId, Long userId) {
         Film film = filmStorage.getFilmById(filmId);
+
         if (film != null) {
-            if (film.getLikes().contains(userId)) {
-                film.getLikes().remove(userId);
-            } else {
-                throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
-            }
-        } else {
             throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
+        }
+
+        if (film.getLikes().contains(userId)) {
+            film.getLikes().remove(userId);
+        } else {
+            throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
         }
     }
 

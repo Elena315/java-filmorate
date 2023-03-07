@@ -43,10 +43,4 @@ public class User {
         }
     }
 
-    public void setName(String name) {
-        if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
-            this.name = login;
-        }
-    }
-
 }

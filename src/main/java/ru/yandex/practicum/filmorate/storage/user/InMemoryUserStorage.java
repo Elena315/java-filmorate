@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +28,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User create(User user) {
-        if (isValidUser(user)) {
-            user.setId(++id);
-            users.put(user.getId(), user);
-        }
-        return user;
+        user.setId(++id);
+        return  users.put(user.getId(), user);
     }
 
     @Override
@@ -44,10 +40,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (!users.containsKey(user.getId())) {
             throw new UserNotFoundException("Пользователь с ID=" + user.getId() + " не найден!");
         }
-        if (isValidUser(user)) {
-            users.put(user.getId(), user);
-        }
-        return user;
+        return users.put(user.getId(), user);
     }
 
     @Override
@@ -71,18 +64,5 @@ public class InMemoryUserStorage implements UserStorage {
             throw new UserNotFoundException("Пользователь с ID=" + userId + " не найден!");
         }
         return users.get(userId);
-    }
-
-    private boolean isValidUser(User user) {
-        if (!user.getEmail().contains("@")) {
-            throw new ValidationException("Некорректный e-mail пользователя: " + user.getEmail());
-        }
-        if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
-            throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Некорректная дата рождения пользователя: " + user.getBirthday());
-        }
-        return true;
     }
 }

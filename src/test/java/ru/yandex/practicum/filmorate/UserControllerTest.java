@@ -24,7 +24,7 @@ public class UserControllerTest {
     @BeforeEach
     public void beforeEach() {
         userStorage = new InMemoryUserStorage();
-        userController = new UserController(new UserService(userStorage), userStorage);
+        userController = new UserController(new UserService(userStorage));
         user = User.builder()
                 .name("MyName")
                 .login("MaxPower")

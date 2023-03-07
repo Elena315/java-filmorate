@@ -5,7 +5,6 @@ import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +29,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film create(Film film) {
-        if (isValidFilm(film)) {
-            film.setId(++id);
-            films.put(film.getId(), film);
-        }
-        return film;
+        film.setId(++id);
+        return films.put(film.getId(), film);
     }
 
     @Override
@@ -45,10 +41,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(film.getId())) {
             throw new FilmNotFoundException("Фильм с ID=" + film.getId() + " не найден!");
         }
-        if (isValidFilm(film)) {
-            films.put(film.getId(), film);
-        }
-        return film;
+        return films.put(film.getId(), film);
     }
 
     @Override
@@ -68,22 +61,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             throw new FilmNotFoundException("Фильм с ID=" + filmId + " не найден!");
         }
         return films.get(filmId);
-    }
-
-    private boolean isValidFilm(Film film) {
-        if (film.getName().isEmpty()) {
-            throw new ValidationException("Название фильма не должно быть пустым!");
-        }
-        if ((film.getDescription().length()) > 200 || (film.getDescription().isEmpty())) {
-            throw new ValidationException("Описание фильма больше 200 символов или пустое: " + film.getDescription().length());
-        }
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            throw new ValidationException("Некорректная дата релиза фильма: " + film.getReleaseDate());
-        }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность должна быть положительной: " + film.getDuration());
-        }
-        return true;
     }
 }
 
