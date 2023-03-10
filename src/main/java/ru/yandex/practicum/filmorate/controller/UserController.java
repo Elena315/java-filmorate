@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -12,14 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
 
-    private UserService userService;
-
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    private final UserService userService;
 
     @GetMapping
     public List<User> getUsers() {
@@ -46,9 +44,7 @@ public class UserController {
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя");
-        if (isValidUser(user)) {
-            userService.create(user);
-        }
+        userService.create(user);
         return user;
     }
 
@@ -56,9 +52,7 @@ public class UserController {
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
         log.info("Получен PUT-запрос к эндпоинту: '/users' на обновление пользователя с ID={}", user.getId());
-        if (isValidUser(user)) {
-            userService.update(user);
-        }
+        userService.update(user);
         return user;
     }
 
@@ -77,17 +71,4 @@ public class UserController {
         log.info("Получен DELETE-запрос к эндпоинту: '/users' на удаление пользователя с ID={}", id);
         userService.delete(id);
     }
-
-    private boolean isValidUser(User user) {
-       if (!user.getEmail().contains("@")) {
-        throw new ValidationException("Некорректный e-mail пользователя: " + user.getEmail());
-    }
-        if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
-        throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
-    }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-        throw new ValidationException("Некорректная дата рождения пользователя: " + user.getBirthday());
-    }
-        return true;
-}
 }

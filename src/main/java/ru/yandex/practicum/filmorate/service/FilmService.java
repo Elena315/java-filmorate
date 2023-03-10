@@ -64,11 +64,11 @@ public class FilmService {
             throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
         }
 
-        if (film.getLikes().contains(userId)) {
-            film.getLikes().remove(userId);
-        } else {
+        if (!film.getLikes().contains(userId)) {
             throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
         }
+
+        film.getLikes().remove(userId);
     }
 
     public List<Film> getPopular(Integer count) {

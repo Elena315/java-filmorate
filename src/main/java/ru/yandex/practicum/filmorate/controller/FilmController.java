@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -12,14 +13,11 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/films")
 public class FilmController {
 
-    private FilmService filmService;
-
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
-    }
+    private final FilmService filmService;
 
     @GetMapping
     public List<Film> getFilms() {
@@ -73,17 +71,8 @@ public class FilmController {
     }
 
     private boolean isValidFilm(Film film) {
-        if (film.getName().isEmpty()) {
-            throw new ValidationException("Название фильма не должно быть пустым!");
-        }
-        if ((film.getDescription().length()) > 200 || (film.getDescription().isEmpty())) {
-            throw new ValidationException("Описание фильма больше 200 символов или пустое: " + film.getDescription().length());
-        }
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Некорректная дата релиза фильма: " + film.getReleaseDate());
-        }
-        if (film.getDuration() <= 0) {
-            throw new ValidationException("Продолжительность должна быть положительной: " + film.getDuration());
         }
         return true;
     }
