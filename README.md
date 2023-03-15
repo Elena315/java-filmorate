@@ -2,11 +2,14 @@
 
 ### Схема БД
 
-![](C:\Users\Alcab\dev\java-filmorate\src\main\resources\schema.png)
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="src/main/resources/schema.png">
+<img src="src/main/resources/schema.png">
+</picture>
 
 ### Код из dbdiagram.io
 
-Table film {
+```Table film {
 id int [pk, increment]
 name varchar [not null]
 description varchar
@@ -21,7 +24,7 @@ email varchar [unique, not null]
 login varchar [not null]
 name varchar
 birthday timestamp
-}
+}`
 
 Table likes {
 film_id int
@@ -55,7 +58,7 @@ Ref: likes.film_id > film.id
 Ref: likes.user_id > user.id
 Ref: user_friends.user_id > user.id
 Ref: user_friends.friend_id > user.id
-
+```
 ### Примеры запросов
 
 Получить фильм с id=2
