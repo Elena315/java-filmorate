@@ -24,7 +24,7 @@ email varchar [unique, not null]
 login varchar [not null]
 name varchar
 birthday timestamp
-}`
+}
 
 Table likes {
 film_id int
