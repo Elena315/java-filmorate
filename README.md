@@ -3,8 +3,8 @@
 ### Схема БД
 
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="src/main/resources/schema1.png">
-<img src="src/main/resources/schema1.png">
+<source media="(prefers-color-scheme: dark)" srcset="src/main/resources/shema1.png">
+<img src="C:\Users\Alcab\dev\java-filmorate\src\main\resources\shema1.png">
 </picture>
 
 ### Код из dbdiagram.io
