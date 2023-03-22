@@ -2,10 +2,7 @@
 
 ### Схема БД
 
-<picture>
-<source media="(prefers-color-scheme: dark)" srcset="src/main/resources/shema1.png">
-<img src="C:\Users\Alcab\dev\java-filmorate\src\main\resources\shema1.png">
-</picture>
+![java-filmorate database scheme](shema1.png)
 
 ### Код из dbdiagram.io
 ```Table film {
