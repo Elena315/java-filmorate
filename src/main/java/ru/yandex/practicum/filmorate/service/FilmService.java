@@ -1,64 +1,80 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import java.time.LocalDate;
-import java.util.Map;
-import java.util.Set;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Component
+@Service
 @Slf4j
-@AllArgsConstructor
 public class FilmService {
 
-    private static int increment = 0;
+    private FilmStorage filmStorage;
+    private UserStorage userStorage;
 
-    private final Validator validator;
+    @Autowired
+   public FilmService(FilmStorage filmStorage, UserStorage userStorage){
+       this.filmStorage = filmStorage;
+       this.userStorage = userStorage;
+   }
 
-    private static final LocalDate START_DATA = LocalDate.of(1895, 12, 28);
-
-    private final FilmStorage filmStorage;
-
-    public Map<Integer, Film> getAllFilms() {
-        return filmStorage.getFilms();
+    public List<Film> getAllFilms() {
+        return filmStorage.getAllFilms();
     }
 
-    public Film createFilm(Film film) {
-        validate(film);
+    public Film getFilmById(Long id) {
+        return filmStorage.getFilmById(id);
+    }
+
+    public Film create(Film film) {
         return filmStorage.create(film);
     }
 
-    public Film updateFilm(Film film) {
-        validate(film);
+    public Film update(Film film) {
         return filmStorage.update(film);
     }
 
-    public void validateReleaseDate(Film film, String text) {
-        if (film.getReleaseDate().isBefore(START_DATA)) {
-            log.debug("Не {} фильм: {}", text, film.getName());
-            throw new ValidationException("Дата релиза не может быть раньше " + START_DATA);
-        }
-        log.debug("{} фильм: {}", text, film.getName());
-    }
-    private void validate(Film film) {
-        validateReleaseDate(film, "добавлен");
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        if (!violations.isEmpty()) {
-            throw new ValidationException("Ошибка валидации Фильма");
-        }
-        if (film.getId() == 0) {
-            film.setId(getNextId());
-        }
+    public Film delete(Long filmId){
+        return filmStorage.delete(filmId);
     }
 
-    private static int getNextId() {
-        return ++increment;
+    public void addLike(Long filmId, Long userId) {
+        Film film = filmStorage.getFilmById(filmId);
+        if (film == null) {
+            throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
+        }
+
+        if (userStorage.getUserById(userId) == null) {
+            throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
+        }
+
+        film.getLikes().add(userId);
+    }
+
+    public void deleteLike(Long filmId, Long userId) {
+        Film film = filmStorage.getFilmById(filmId);
+        if (film == null) {
+            throw new FilmNotFoundException("Фильм c ID=" + filmId + " не найден!");
+        }
+
+        if (!film.getLikes().contains(userId)) {
+            throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
+        }
+
+        film.getLikes().remove(userId);
+    }
+
+    public List<Film> getPopular(Integer count) {
+        return filmStorage.getAllFilms().stream()
+                .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 }

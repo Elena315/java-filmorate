@@ -1,63 +1,80 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-@Component
+@Service
 @Slf4j
-@AllArgsConstructor
 public class UserService {
-    private static int increment = 0;
 
-    private final Validator validator;
+    private UserStorage userStorage;
 
-    private final UserStorage userStorage;
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
+    }
 
-    public Map<Integer, User> getAllUsers() {
+    public List<User> getUsers() {
         return userStorage.getUsers();
     }
 
-    public User createUser(User user) {
-        validate(user);
+    public User getUserById(Long userId) {
+        return userStorage.getUserById(userId);
+    }
+
+    public User create(User user) {
         return userStorage.create(user);
     }
 
-    public User updateUser(User user) {
-        validate(user);
+    public User update(User user) {
         return userStorage.update(user);
     }
 
-    public void setUserNameByLogin(User user, String text) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        log.debug("{} пользователь: {}, email: {}", text, user.getName(), user.getEmail());
+    public User delete(Long id) {
+        return userStorage.delete(id);
     }
 
-    private void validate(final User user) {
-        if (user.getId() == 0) {
-            user.setId(++increment);
-        }
-        if(user.getName() == null) {
-            user.setName(user.getLogin());
-            log.info("UserService: Поле name не задано. Установлено значение {} из поля login", user.getLogin());
-        }else if (user.getName().isEmpty() || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-            log.info("UserService: Поле name не содержит буквенных символов. " +
-                    "Установлено значение {} из поля login", user.getLogin());
-        }
-        Set<ConstraintViolation<User>> violations = validator.validate(user);
-        if (!violations.isEmpty()) {
-            throw new ValidationException("Ошибка валидации Пользователя");
-        }
+    public void addFriend(Long userId, Long friendId) {
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+        user.getFriends().add(friendId);
+        friend.getFriends().add(userId);
     }
+
+    public void deleteFriend(Long userId, Long friendId) {
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+        user.getFriends().remove(friendId);
+        friend.getFriends().remove(userId);
+    }
+
+    public List<User> getFriends(Long userId) {
+        User user = userStorage.getUserById(userId);
+        List<User> friends = new ArrayList<>();
+        if (user.getFriends() != null) {
+            for (Long currentId : user.getFriends()) {
+                friends.add(userStorage.getUserById(currentId));
+            }
+        }
+        return friends;
+    }
+
+    public List<User> getCommonFriends(Long firstUserId, Long secondUserId) {
+        User firstUser = userStorage.getUserById(firstUserId);
+        User secondUser = userStorage.getUserById(secondUserId);
+        Set<Long> intersection = new HashSet<>(firstUser.getFriends());
+        intersection.retainAll(secondUser.getFriends());
+        List<User> commonFriends = new ArrayList<>();
+        for (Long i : intersection) {
+            commonFriends.add(userStorage.getUserById(i));
+        }
+        return commonFriends;
+    }
+
 }
