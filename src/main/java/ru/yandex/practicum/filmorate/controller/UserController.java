@@ -37,7 +37,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable("id") Long id,
-                                      @PathVariable("otherId") Long otherId) {
+                                       @PathVariable("otherId") Long otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 
@@ -45,7 +45,7 @@ public class UserController {
     @PostMapping
     public User create(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя");
-        if(isValidUser(user)) {
+        if (isValidUser(user)) {
             userService.create(user);
         }
         return user;

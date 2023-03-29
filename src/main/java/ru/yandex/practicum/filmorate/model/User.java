@@ -17,7 +17,7 @@ public class User {
 
     private Long id;
 
-    @Email (message = "Введенное значение не является адресом электронной почты.")
+    @Email(message = "Введенное значение не является адресом электронной почты.")
     private String email;
 
     @NotBlank(message = "Логин не может быть пустым.")
@@ -26,8 +26,7 @@ public class User {
     private String name;
 
 
-
-    @PastOrPresent (message = "Дата рождения не может быть в будущем.")
+    @PastOrPresent(message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
 
     private Set<Long> friends;

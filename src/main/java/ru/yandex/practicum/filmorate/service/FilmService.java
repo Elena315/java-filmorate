@@ -47,7 +47,7 @@ public class FilmService {
         return filmStorage.update(film);
     }
 
-    public Film delete(Long filmId){
+    public Film delete(Long filmId) {
         return filmStorage.delete(filmId);
     }
 
@@ -61,7 +61,7 @@ public class FilmService {
             throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
         }
         likeStorage.addLike(filmId, userId);
-       // film.getLikes().add(userId);
+        // film.getLikes().add(userId);
     }
 
     public void deleteLike(Long filmId, Long userId) {

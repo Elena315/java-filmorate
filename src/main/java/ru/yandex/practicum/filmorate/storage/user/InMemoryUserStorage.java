@@ -18,7 +18,7 @@ public class InMemoryUserStorage implements UserStorage {
     private Long id;
     private Map<Long, User> users;
 
-    public InMemoryUserStorage(){
+    public InMemoryUserStorage() {
         id = 0L;
         users = new HashMap<>();
     }
@@ -31,7 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User create(User user) {
         user.setId(++id);
-        return  users.put(user.getId(), user);
+        return users.put(user.getId(), user);
     }
 
     @Override

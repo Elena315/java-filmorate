@@ -37,7 +37,7 @@ public class UserControllerTest {
     @Test
     public void shouldNoAddUserWhenUserEmailIsEmpty() {
         user.setEmail("");
-       assertThrows(ValidationException.class, () -> userController.create(user));
+        assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
     }
 
@@ -69,7 +69,7 @@ public class UserControllerTest {
     @Test
     public void shouldAddUserWhenUserBirthdayInFuture() {
         user.setBirthday(LocalDate.now().plusDays(1));
-       assertThrows(ValidationException.class, () -> userController.create(user));
+        assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
     }
 
