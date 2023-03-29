@@ -28,10 +28,10 @@ public class Film {
 
     @Min(value = 0, message = "Продолжительность фильма не может быть отрицательной.")
     private Integer duration;
-    private Set<Long> likes = new HashSet<>();
+    private Set<Long> likes;
     @NotNull
     private Mpa mpa;
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres;
 
     public Film(Long id, String name, String description, LocalDate releaseDate, Integer duration,
                 Set<Long> likes, Mpa mpa, Set<Genre> genres) {

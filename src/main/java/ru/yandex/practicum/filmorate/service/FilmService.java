@@ -2,15 +2,17 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -18,15 +20,19 @@ public class FilmService {
 
     private FilmStorage filmStorage;
     private UserStorage userStorage;
+    private LikeStorage likeStorage;
 
     @Autowired
-   public FilmService(FilmStorage filmStorage, UserStorage userStorage){
-       this.filmStorage = filmStorage;
-       this.userStorage = userStorage;
-   }
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       @Qualifier("userDbStorage") UserStorage userStorage,
+                       LikeStorage likeStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
+        this.likeStorage = likeStorage;
+    }
 
-    public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+    public List<Film> getFilms() {
+        return filmStorage.getFilms();
     }
 
     public Film getFilmById(Long id) {
@@ -54,8 +60,8 @@ public class FilmService {
         if (userStorage.getUserById(userId) == null) {
             throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
         }
-
-        film.getLikes().add(userId);
+        likeStorage.addLike(filmId, userId);
+       // film.getLikes().add(userId);
     }
 
     public void deleteLike(Long filmId, Long userId) {
@@ -67,14 +73,14 @@ public class FilmService {
         if (!film.getLikes().contains(userId)) {
             throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
         }
-
-        film.getLikes().remove(userId);
+        likeStorage.deleteLike(filmId, userId);
+        //film.getLikes().remove(userId);
     }
 
     public List<Film> getPopular(Integer count) {
-        return filmStorage.getAllFilms().stream()
-                .sorted((o1, o2) -> o2.getLikes().size() - o1.getLikes().size())
-                .limit(count)
-                .collect(Collectors.toList());
+        if (count < 1) {
+            new ValidationException("Количество фильмов для вывода не должно быть меньше 1");
+        }
+        return likeStorage.getPopular(count);
     }
 }

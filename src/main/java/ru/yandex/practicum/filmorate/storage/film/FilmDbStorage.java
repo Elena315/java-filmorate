@@ -35,7 +35,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getAllFilms() {
+    public List<Film> getFilms() {
         String sql = "SELECT * FROM films";
         return jdbcTemplate.query(sql, (rs, rowNum) -> new Film(
                 rs.getLong("id"),

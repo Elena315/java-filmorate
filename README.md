@@ -4,64 +4,6 @@
 
 ![java-filmorate database scheme](shema1.png)
 
-### Код из dbdiagram.io
-```Table film {
-film_id int [pk, increment]
-film_name varchar [not null]
-film_description varchar
-film_release_date date
-film_duration int
-film_rate real
-film_mpa int [ref: > mpa.mpa_id]
-}
-
-Table user {
-user_id int [pk, increment]
-user_name varchar
-user_login varchar [not null]
-user_email varchar [unique, not null]
-user_birthday date
-}
-
-Table likes {
-film_id int
-user_id int
-}
-
-Table genre {
-genre_id int [pk, increment]
-genre_name varchar [not null]
-}
-
-Table film_genres {
-film_id int
-genre_id int
-}
-
-Table mpa {
-mpa_id int [pk, increment]
-mpa_name varchar [not null]
-}
-
-Table user_friends {
-user_id int
-friend_id int
-status int
-}
-
-Table status_friendship {
-status_id int [pk, increment]
-status_name varchar 
-}
-
-Ref: film_genres.film_id > film.film_id
-Ref: film_genres.genre_id > genre.genre_id
-Ref: likes.film_id > film.film_id
-Ref: likes.user_id > user.user_id
-Ref: user_friends.user_id > user.user_id
-Ref: user_friends.friend_id > user.user_id
-Ref: user_friends.status > status_friendship.status_id
-```
 ### Примеры запросов
 
 Получение определенных данных всех фильмов:

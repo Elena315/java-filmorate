@@ -21,7 +21,7 @@ public class FilmController {
 
     @GetMapping
     public List<Film> getFilms() {
-        return filmService.getAllFilms();
+        return filmService.getFilms();
     }
 
     @GetMapping("/{id}")
@@ -36,7 +36,7 @@ public class FilmController {
 
     @ResponseBody
     @PostMapping
-    public Film createFilm(@Valid @RequestBody Film film) {
+    public Film create(@Valid @RequestBody Film film) {
         log.info("Получен POST-запрос к эндпоинту: '/films' на добавление фильма");
         if (isValidFilm(film)) {
             filmService.create(film);
@@ -46,7 +46,7 @@ public class FilmController {
 
     @ResponseBody
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) {
+    public Film update(@Valid @RequestBody Film film) {
         log.info("Получен PUT-запрос к эндпоинту: '/films' на обновление фильма с ID={}", film.getId());
         if (isValidFilm(film)) {
             filmService.update(film);
@@ -73,6 +73,15 @@ public class FilmController {
     private boolean isValidFilm(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Некорректная дата релиза фильма: " + film.getReleaseDate());
+        }
+        if (film.getName().isEmpty()) {
+            throw new ValidationException("Название фильма не должно быть пустым!");
+        }
+        if ((film.getDescription().length()) > 200 || (film.getDescription().isEmpty())) {
+            throw new ValidationException("Описание фильма больше 200 символов или пустое: " + film.getDescription().length());
+        }
+        if (film.getDuration() <= 0) {
+            throw new ValidationException("Продолжительность должна быть положительной: " + film.getDuration());
         }
         return true;
     }

@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.film.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.like.LikeStorage;
 import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
@@ -24,12 +25,14 @@ public class FilmControllerTest {
     private FilmController filmController;
     private FilmStorage filmStorage;
     private UserStorage userStorage;
+    private LikeStorage likeStorage;
 
     @BeforeEach
     public void beforeEach() {
         filmStorage = new InMemoryFilmStorage();
         userStorage = new InMemoryUserStorage();
-        filmController = new FilmController(new FilmService(filmStorage, userStorage));
+
+        filmController = new FilmController(new FilmService(filmStorage, userStorage, null));
         film = Film.builder()
                 .name("Breakfast at Tiffany's")
                 .description("American romantic comedy film directed by Blake Edwards, written by George Axelrod," +
@@ -42,7 +45,7 @@ public class FilmControllerTest {
     // проверка контроллера при корректных атрибутах фильма
     @Test
     public void shouldAddFilmWhenAllAttributeCorrect() {
-        Film film1 = filmController.createFilm(film);
+        Film film1 = filmController.create(film);
         assertEquals(film, film1, "Переданный и полученный фильмы должны совпадать");
         assertEquals(1, filmController.getFilms().size(), "В списке должен быть один фильм");
     }
@@ -51,7 +54,7 @@ public class FilmControllerTest {
     @Test
     public void shouldNoAddFilmWhenFilmNameIsEmpty() {
         film.setName("");
-        //assertThrows(ValidationException.class, () -> filmController.createFilm(film));
+        assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
     }
 
@@ -59,7 +62,7 @@ public class FilmControllerTest {
     @Test
     public void shouldNoAddFilmWhenFilmDescriptionMoreThan200Symbols() {
         film.setDescription(film.getDescription() + film.getDescription()); // длина описания 286 символов
-     //   assertThrows(ValidationException.class, () -> filmController.createFilm(film));
+        assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
     }
 
@@ -67,7 +70,7 @@ public class FilmControllerTest {
     @Test
     public void shouldNoAddFilmWhenFilmDescriptionIsEmpty() {
         film.setDescription("");
-     //   assertThrows(ValidationException.class, () -> filmController.createFilm(film));
+        assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
     }
 
@@ -75,7 +78,7 @@ public class FilmControllerTest {
     @Test
     public void shouldNoAddFilmWhenFilmReleaseDateIsBefore28121895() {
         film.setReleaseDate(LocalDate.of(1895,12,27));
-        assertThrows(ValidationException.class, () -> filmController.createFilm(film));
+        assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
     }
 
@@ -83,7 +86,7 @@ public class FilmControllerTest {
     @Test
     public void shouldNoAddFilmWhenFilmDurationIsZero() {
         film.setDuration(0);
-      //  assertThrows(ValidationException.class, () -> filmController.createFilm(film));
+       assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
     }
 
@@ -91,7 +94,7 @@ public class FilmControllerTest {
     @Test
     public void shouldNoAddFilmWhenFilmDurationIsNegative() {
         film.setDuration(-1);
-      //  assertThrows(ValidationException.class, () -> filmController.createFilm(film));
+       assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
     }
 }
