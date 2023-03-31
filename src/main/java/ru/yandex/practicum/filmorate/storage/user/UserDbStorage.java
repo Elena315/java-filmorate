@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Component("userDbStorage")
@@ -81,7 +82,7 @@ public class UserDbStorage implements UserStorage {
                     userRows.getString("email"),
                     userRows.getString("login"),
                     userRows.getString("name"),
-                    userRows.getDate("birthday").toLocalDate(),
+                    Objects.requireNonNull(userRows.getDate("birthday")).toLocalDate(),
                     null);
         } else {
             throw new UserNotFoundException("Пользователь с ID=" + userId + " не найден!");

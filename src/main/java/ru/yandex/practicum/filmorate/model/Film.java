@@ -2,14 +2,13 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-
-import javax.validation.constraints.*;
-
 import org.hibernate.validator.constraints.Length;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 

@@ -4,23 +4,19 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.friend.FriendStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
 public class UserService {
 
-    private UserStorage userStorage;
-    private FriendStorage friendStorage;
+    private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
 
     @Autowired
     public UserService(@Qualifier("userDbStorage") UserStorage userStorage, FriendStorage friendStorage) {
@@ -49,14 +45,14 @@ public class UserService {
     }
 
     public void addFriend(Long userId, Long friendId) {
-        if (userId == friendId) {
+        if (Objects.equals(userId, friendId)) {
             throw new ValidationException("Нельзя добавить самого себя в друзья!");
         }
         friendStorage.addFriend(userId, friendId);
     }
 
     public void deleteFriend(Long userId, Long friendId) {
-        if (userId == friendId) {
+        if (Objects.equals(userId, friendId)) {
             throw new ValidationException("Нельзя удалить самого себя из друзей!");
         }
         friendStorage.deleteFriend(userId, friendId);
@@ -79,7 +75,8 @@ public class UserService {
             intersection = new HashSet<>(friendStorage.getFriends(firstUserId));
             intersection.retainAll(friendStorage.getFriends(secondUserId));
         }
-        return new ArrayList<User>(intersection);
+        assert intersection != null;
+        return new ArrayList<>(intersection);
     }
 
 }

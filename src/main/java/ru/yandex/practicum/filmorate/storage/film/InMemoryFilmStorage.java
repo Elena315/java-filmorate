@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -11,13 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Primary
 @Component
 public class InMemoryFilmStorage implements FilmStorage {
 
     private Long id;
 
-    private Map<Long, Film> films;
+    private final Map<Long, Film> films;
 
     public InMemoryFilmStorage() {
         this.id = 0L;

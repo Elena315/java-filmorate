@@ -18,9 +18,9 @@ import java.util.List;
 @Slf4j
 public class FilmService {
 
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
-    private LikeStorage likeStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
+    private final LikeStorage likeStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
@@ -61,7 +61,7 @@ public class FilmService {
             throw new UserNotFoundException("Пользователь c ID=" + userId + " не найден!");
         }
         likeStorage.addLike(filmId, userId);
-        // film.getLikes().add(userId);
+
     }
 
     public void deleteLike(Long filmId, Long userId) {
@@ -74,12 +74,12 @@ public class FilmService {
             throw new UserNotFoundException("Лайк от пользователя c ID=" + userId + " не найден!");
         }
         likeStorage.deleteLike(filmId, userId);
-        //film.getLikes().remove(userId);
+
     }
 
     public List<Film> getPopular(Integer count) {
         if (count < 1) {
-            new ValidationException("Количество фильмов для вывода не должно быть меньше 1");
+            throw new ValidationException("Количество фильмов для вывода не должно быть меньше 1");
         }
         return likeStorage.getPopular(count);
     }

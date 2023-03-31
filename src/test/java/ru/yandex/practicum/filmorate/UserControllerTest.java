@@ -15,15 +15,14 @@ import java.time.LocalDate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class UserControllerTest {
+class UserControllerTest {
 
     private User user;
     private UserController userController;
-    private UserStorage userStorage;
 
     @BeforeEach
     public void beforeEach() {
-        userStorage = new InMemoryUserStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
         userController = new UserController(new UserService(userStorage, null));
         user = User.builder()
                 .name("MyName")
@@ -35,7 +34,7 @@ public class UserControllerTest {
 
     // проверка контроллера при "пустой" электронной почте пользователя
     @Test
-    public void shouldNoAddUserWhenUserEmailIsEmpty() {
+    void shouldNoAddUserWhenUserEmailIsEmpty() {
         user.setEmail("");
         assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
@@ -43,7 +42,7 @@ public class UserControllerTest {
 
     // проверка контроллера, когда электронная почта не содержит символа @
     @Test
-    public void shouldNoAddUserWhenUserEmailIsNotContainsCommercialAt() {
+    void shouldNoAddUserWhenUserEmailIsNotContainsCommercialAt() {
         user.setEmail("notemail.ru");
         assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
@@ -51,7 +50,7 @@ public class UserControllerTest {
 
     // проверка контроллера, когда у пользователя пустой логин
     @Test
-    public void shouldNoAddUserWhenUserLoginIsEmpty() {
+    void shouldNoAddUserWhenUserLoginIsEmpty() {
         user.setLogin("");
         assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
@@ -59,7 +58,7 @@ public class UserControllerTest {
 
     // проверка контроллера, когда логин пользователя содержит пробелы
     @Test
-    public void shouldNoAddUserWhenUserLoginIsContainsSpaces() {
+    void shouldNoAddUserWhenUserLoginIsContainsSpaces() {
         user.setLogin("Max Power");
         assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
@@ -67,7 +66,7 @@ public class UserControllerTest {
 
     // проверка контроллера, когда дата рождения пользователя в будущем
     @Test
-    public void shouldAddUserWhenUserBirthdayInFuture() {
+    void shouldAddUserWhenUserBirthdayInFuture() {
         user.setBirthday(LocalDate.now().plusDays(1));
         assertThrows(ValidationException.class, () -> userController.create(user));
         assertEquals(0, userController.getUsers().size(), "Список пользователей должен быть пустым");
@@ -75,7 +74,7 @@ public class UserControllerTest {
 
     // проверка контроллера при корректных атрибутах пользователя
     @Test
-    public void shouldAddUserWhenAllAttributeCorrect() {
+    void shouldAddUserWhenAllAttributeCorrect() {
         User user1 = userController.create(user);
         assertEquals(user, user1, "Переданный и полученный пользователь должны совпадать");
         assertEquals(1, userController.getUsers().size(), "В списке должен быть один пользователь");
@@ -83,11 +82,10 @@ public class UserControllerTest {
 
     // проверка контроллера, когда имя пользователя пустое
     @Test
-    public void shouldAddUserWhenUserNameIsEmpty() {
+    void shouldAddUserWhenUserNameIsEmpty() {
         user.setName("");
         User user1 = userController.create(user);
-        assertTrue(user1.getName().equals(user.getLogin()),
-                "Имя и логин пользователя должны совпадать");
+        assertEquals(user1.getName(), user.getLogin(), "Имя и логин пользователя должны совпадать");
         assertEquals(1, userController.getUsers().size(), "В списке должен быть один пользователь");
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
+import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -66,7 +67,7 @@ public class FriendStorage {
                     userId
             );
         } else {
-            return null;
+            return Collections.emptyList();
         }
     }
 }

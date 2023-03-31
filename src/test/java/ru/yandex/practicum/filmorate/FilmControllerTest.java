@@ -19,18 +19,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
-
-public class FilmControllerTest {
+class FilmControllerTest {
     private Film film;
     private FilmController filmController;
-    private FilmStorage filmStorage;
-    private UserStorage userStorage;
     private LikeStorage likeStorage;
 
     @BeforeEach
     public void beforeEach() {
-        filmStorage = new InMemoryFilmStorage();
-        userStorage = new InMemoryUserStorage();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
 
         filmController = new FilmController(new FilmService(filmStorage, userStorage, null));
         film = Film.builder()
@@ -44,7 +41,7 @@ public class FilmControllerTest {
 
     // проверка контроллера при корректных атрибутах фильма
     @Test
-    public void shouldAddFilmWhenAllAttributeCorrect() {
+    void shouldAddFilmWhenAllAttributeCorrect() {
         Film film1 = filmController.create(film);
         assertEquals(film, film1, "Переданный и полученный фильмы должны совпадать");
         assertEquals(1, filmController.getFilms().size(), "В списке должен быть один фильм");
@@ -52,7 +49,7 @@ public class FilmControllerTest {
 
     // проверка контроллера при "пустом" названии у фильма
     @Test
-    public void shouldNoAddFilmWhenFilmNameIsEmpty() {
+    void shouldNoAddFilmWhenFilmNameIsEmpty() {
         film.setName("");
         assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
@@ -60,7 +57,7 @@ public class FilmControllerTest {
 
     // проверка контроллера, когда максимальная длина описания больше 200 символов
     @Test
-    public void shouldNoAddFilmWhenFilmDescriptionMoreThan200Symbols() {
+    void shouldNoAddFilmWhenFilmDescriptionMoreThan200Symbols() {
         film.setDescription(film.getDescription() + film.getDescription()); // длина описания 286 символов
         assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
@@ -68,7 +65,7 @@ public class FilmControllerTest {
 
     // проверка контроллера, когда у фильма нет описания
     @Test
-    public void shouldNoAddFilmWhenFilmDescriptionIsEmpty() {
+    void shouldNoAddFilmWhenFilmDescriptionIsEmpty() {
         film.setDescription("");
         assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
@@ -76,7 +73,7 @@ public class FilmControllerTest {
 
     // проверка контроллера, когда дата релиза фильма раньше 28-12-1895
     @Test
-    public void shouldNoAddFilmWhenFilmReleaseDateIsBefore28121895() {
+    void shouldNoAddFilmWhenFilmReleaseDateIsBefore28121895() {
         film.setReleaseDate(LocalDate.of(1895, 12, 27));
         assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
@@ -84,7 +81,7 @@ public class FilmControllerTest {
 
     // проверка контроллера, когда продолжительность фильма равна нулю
     @Test
-    public void shouldNoAddFilmWhenFilmDurationIsZero() {
+    void shouldNoAddFilmWhenFilmDurationIsZero() {
         film.setDuration(0);
         assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");
@@ -92,7 +89,7 @@ public class FilmControllerTest {
 
     // проверка контроллера, когда продолжительность фильма отрицательная
     @Test
-    public void shouldNoAddFilmWhenFilmDurationIsNegative() {
+    void shouldNoAddFilmWhenFilmDurationIsNegative() {
         film.setDuration(-1);
         assertThrows(ValidationException.class, () -> filmController.create(film));
         assertEquals(0, filmController.getFilms().size(), "Список фильмов должен быть пустым");

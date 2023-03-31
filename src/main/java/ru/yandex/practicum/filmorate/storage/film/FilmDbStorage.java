@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 public class FilmDbStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
-    private MpaService mpaService;
-    private GenreService genreService;
-    private LikeStorage likeStorage;
+    private final MpaService mpaService;
+    private final GenreService genreService;
+    private final LikeStorage likeStorage;
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate, MpaService mpaService, GenreService genreService,
@@ -112,7 +112,7 @@ public class FilmDbStorage implements FilmStorage {
                     filmRows.getLong("id"),
                     filmRows.getString("name"),
                     filmRows.getString("description"),
-                    filmRows.getDate("release_date").toLocalDate(),
+                    Objects.requireNonNull(filmRows.getDate("release_date")).toLocalDate(),
                     filmRows.getInt("duration"),
                     new HashSet<>(likeStorage.getLikes(filmRows.getLong("id"))),
                     mpa,

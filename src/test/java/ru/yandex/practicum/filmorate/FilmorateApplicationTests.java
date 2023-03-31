@@ -87,7 +87,7 @@ class FilmorateApplicationTests {
                 .build();
         secondFilm.setMpa(new Mpa(3, "PG-13"));
         secondFilm.setLikes(new HashSet<>());
-        secondFilm.setGenres(new HashSet<>(Arrays.asList(new Genre(6, "Боевик"))));
+        secondFilm.setGenres(new HashSet<>(List.of(new Genre(6, "Боевик"))));
 
         thirdFilm = Film.builder()
                 .name("One Flew Over the Cuckoo's Nest")
@@ -98,11 +98,11 @@ class FilmorateApplicationTests {
                 .build();
         thirdFilm.setMpa(new Mpa(4, "R"));
         thirdFilm.setLikes(new HashSet<>());
-        thirdFilm.setGenres(new HashSet<>(Arrays.asList(new Genre(2, "Драма"))));
+        thirdFilm.setGenres(new HashSet<>(List.of(new Genre(2, "Драма"))));
     }
 
     @Test
-    public void testCreateUserAndGetUserById() {
+    void testCreateUserAndGetUserById() {
         firstUser = userStorage.create(firstUser);
         Optional<User> userOptional = Optional.ofNullable(userStorage.getUserById(firstUser.getId()));
         assertThat(userOptional)
@@ -113,7 +113,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testGetUsers() {
+    void testGetUsers() {
         firstUser = userStorage.create(firstUser);
         secondUser = userStorage.create(secondUser);
         List<User> listUsers = userStorage.getUsers();
@@ -122,7 +122,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testUpdateUser() {
+    void testUpdateUser() {
         firstUser = userStorage.create(firstUser);
         User updateUser = User.builder()
                 .id(firstUser.getId())
@@ -139,15 +139,15 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void deleteUser() {
+    void deleteUser() {
         firstUser = userStorage.create(firstUser);
         userStorage.delete(firstUser.getId());
         List<User> listUsers = userStorage.getUsers();
-        assertThat(listUsers).hasSize(0);
+        assertThat(listUsers).isEmpty();
     }
 
     @Test
-    public void testCreateFilmAndGetFilmById() {
+    void testCreateFilmAndGetFilmById() {
         firstFilm = filmStorage.create(firstFilm);
         Optional<Film> filmOptional = Optional.ofNullable(filmStorage.getFilmById(firstFilm.getId()));
         assertThat(filmOptional)
@@ -158,7 +158,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testGetFilms() {
+    void testGetFilms() {
         firstFilm = filmStorage.create(firstFilm);
         secondFilm = filmStorage.create(secondFilm);
         thirdFilm = filmStorage.create(thirdFilm);
@@ -169,7 +169,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testUpdateFilm() {
+    void testUpdateFilm() {
         firstFilm = filmStorage.create(firstFilm);
         Film updateFilm = Film.builder()
                 .id(firstFilm.getId())
@@ -189,7 +189,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void deleteFilm() {
+    void deleteFilm() {
         firstFilm = filmStorage.create(firstFilm);
         secondFilm = filmStorage.create(secondFilm);
         filmStorage.delete(firstFilm.getId());
@@ -202,7 +202,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testAddLike() {
+    void testAddLike() {
         firstUser = userStorage.create(firstUser);
         firstFilm = filmStorage.create(firstFilm);
         filmService.addLike(firstFilm.getId(), firstUser.getId());
@@ -212,7 +212,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testDeleteLike() {
+    void testDeleteLike() {
         firstUser = userStorage.create(firstUser);
         secondUser = userStorage.create(secondUser);
         firstFilm = filmStorage.create(firstFilm);
@@ -225,7 +225,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testGetPopularFilms() {
+    void testGetPopularFilms() {
 
         firstUser = userStorage.create(firstUser);
         secondUser = userStorage.create(secondUser);
@@ -264,7 +264,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testAddFriend() {
+    void testAddFriend() {
         firstUser = userStorage.create(firstUser);
         secondUser = userStorage.create(secondUser);
         userService.addFriend(firstUser.getId(), secondUser.getId());
@@ -273,7 +273,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testDeleteFriend() {
+    void testDeleteFriend() {
         firstUser = userStorage.create(firstUser);
         secondUser = userStorage.create(secondUser);
         thirdUser = userStorage.create(thirdUser);
@@ -285,7 +285,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testGetFriends() {
+    void testGetFriends() {
         firstUser = userStorage.create(firstUser);
         secondUser = userStorage.create(secondUser);
         thirdUser = userStorage.create(thirdUser);
@@ -296,7 +296,7 @@ class FilmorateApplicationTests {
     }
 
     @Test
-    public void testGetCommonFriends() {
+    void testGetCommonFriends() {
         firstUser = userStorage.create(firstUser);
         secondUser = userStorage.create(secondUser);
         thirdUser = userStorage.create(thirdUser);
