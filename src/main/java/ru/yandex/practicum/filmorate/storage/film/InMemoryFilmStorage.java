@@ -60,7 +60,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(filmId)) {
             throw new FilmNotFoundException("Фильм с ID=" + filmId + " не найден!");
         }
-        return films.get(filmId);
+        Film film = films.get(filmId);
+        if (film.getGenres().isEmpty()) {
+            film.setGenres(null);
+        }
+        return film;
     }
 }
 

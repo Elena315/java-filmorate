@@ -120,9 +120,6 @@ public class FilmDbStorage implements FilmStorage {
         } else {
             throw new FilmNotFoundException("Фильм с ID=" + filmId + " не найден!");
         }
-        if (film.getGenres().isEmpty()) {
-            film.setGenres(null);
-        }
         return film;
     }
 

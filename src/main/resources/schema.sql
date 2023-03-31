@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS films
     description  varchar(200),
     release_date date         NOT NULL,
     duration     int          NOT NULL,
-    rating_id    int          NOT NULL REFERENCES ratings_mpa (id) ON DELETE RESTRICT
+    rating_id    int          NOT NULL REFERENCES
+    ratings_mpa (id) ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS genres
