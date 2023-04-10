@@ -36,21 +36,23 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable("id") Long id,
-                                      @PathVariable("otherId") Long otherId) {
+                                       @PathVariable("otherId") Long otherId) {
         return userService.getCommonFriends(id, otherId);
     }
 
     @ResponseBody
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
+    public User create(@Valid @RequestBody User user) {
         log.info("Получен POST-запрос к эндпоинту: '/users' на добавление пользователя");
-        userService.create(user);
+        if (isValidUser(user)) {
+            userService.create(user);
+        }
         return user;
     }
 
     @ResponseBody
     @PutMapping
-    public User updateUser(@Valid @RequestBody User user) {
+    public User update(@Valid @RequestBody User user) {
         log.info("Получен PUT-запрос к эндпоинту: '/users' на обновление пользователя с ID={}", user.getId());
         userService.update(user);
         return user;
@@ -70,5 +72,19 @@ public class UserController {
     public void delete(@PathVariable Long id) {
         log.info("Получен DELETE-запрос к эндпоинту: '/users' на удаление пользователя с ID={}", id);
         userService.delete(id);
+    }
+
+    private boolean isValidUser(User user) {
+        if (!user.getEmail().contains("@")) {
+            throw new ValidationException("Некорректный e-mail пользователя: " + user.getEmail());
+        }
+        if ((user.getLogin().isEmpty()) || (user.getLogin().contains(" "))) {
+            throw new ValidationException("Некорректный логин пользователя: " + user.getLogin());
+        }
+
+        if (user.getBirthday().isAfter(LocalDate.now())) {
+            throw new ValidationException("Некорректная дата рождения пользователя: " + user.getBirthday());
+        }
+        return true;
     }
 }

@@ -15,7 +15,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private Long id;
 
-    private Map<Long, Film> films;
+    private final Map<Long, Film> films;
 
     public InMemoryFilmStorage() {
         this.id = 0L;
@@ -23,7 +23,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getAllFilms() {
+    public List<Film> getFilms() {
         return new ArrayList<>(films.values());
     }
 
@@ -60,7 +60,11 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(filmId)) {
             throw new FilmNotFoundException("Фильм с ID=" + filmId + " не найден!");
         }
-        return films.get(filmId);
+        Film film = films.get(filmId);
+        if (film.getGenres().isEmpty()) {
+            film.setGenres(null);
+        }
+        return film;
     }
 }
 

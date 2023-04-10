@@ -6,7 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -15,15 +17,16 @@ public class User {
 
     private Long id;
 
+    @Email(message = "Введенное значение не является адресом электронной почты.")
+    private String email;
+
     @NotBlank(message = "Логин не может быть пустым.")
     @Pattern(regexp = "\\S*", message = "Логин не может содержать пробелы.")
     private String login;
     private String name;
 
-    @Email (message = "Введенное значение не является адресом электронной почты.")
-    private String email;
 
-    @PastOrPresent (message = "Дата рождения не может быть в будущем.")
+    @PastOrPresent(message = "Дата рождения не может быть в будущем.")
     private LocalDate birthday;
 
     private Set<Long> friends;
@@ -41,6 +44,21 @@ public class User {
         if (friends == null) {
             this.friends = new HashSet<>();
         }
+    }
+
+    public void setName(String name) {
+        if ((name == null) || (name.isEmpty()) || (name.isBlank())) {
+            this.name = login;
+        }
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> values = new HashMap<>();
+        values.put("email", email);
+        values.put("login", login);
+        values.put("name", name);
+        values.put("birthday", birthday);
+        return values;
     }
 
 }
